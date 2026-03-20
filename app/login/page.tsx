@@ -80,6 +80,7 @@ export default function LoginPage() {
   const [rCode, setRCode] = useState('+225')
   const [rLocal, setRLocal] = useState('')
   const [rMdp, setRMdp] = useState('')
+  const [rNomComplet, setRNomComplet] = useState('')
   const [rNom, setRNom] = useState('')
   const [rVille, setRVille] = useState('')
   const [rError, setRError] = useState('')
@@ -109,7 +110,7 @@ export default function LoginPage() {
     setRLoading(true)
     const telephone = buildPhone(rCode, rLocal)
     try {
-      const res = await inscription(telephone, rMdp, rNom, rVille)
+      const res = await inscription(telephone, rMdp, rNom, rVille, rNomComplet)
       if (!res.success) { setRError(res.error || "Erreur lors de l'inscription."); return }
       saveSession({ uid: res.uid, nom_commerce: res.nom_commerce, telephone })
       router.replace('/dashboard')
@@ -167,6 +168,12 @@ export default function LoginPage() {
             <div>
               <label className="block text-sm text-gray-400 mb-1">Mot de passe</label>
               <PasswordInput value={rMdp} onChange={setRMdp} placeholder="Min 4 caractères" />
+            </div>
+            <div>
+              <label className="block text-sm text-gray-400 mb-1">Nom complet</label>
+              <input type="text" value={rNomComplet} onChange={e => setRNomComplet(e.target.value)}
+                placeholder="Ex : Kouassi Jean-Baptiste" required
+                className="w-full bg-gray-800 border border-gray-700 rounded-xl px-4 py-3 text-white placeholder-gray-500 focus:outline-none focus:border-brand" />
             </div>
             <div>
               <label className="block text-sm text-gray-400 mb-1">Nom du commerce</label>

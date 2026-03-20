@@ -22,12 +22,13 @@ export async function login(telephone: string, mot_de_passe: string) {
   })
 }
 
-export async function inscription(telephone: string, mot_de_passe: string, nom_commerce: string, ville_commune: string) {
+export async function inscription(telephone: string, mot_de_passe: string, nom_commerce: string, ville_commune: string, nom_complet = '') {
   return post<{ success: boolean; uid: string; nom_commerce: string; error?: string }>('inscription', {
     telephone,
     mot_de_passe,
     nom_commerce,
     ville_commune,
+    nom_complet,
   })
 }
 

@@ -158,10 +158,16 @@ export default function DashboardHome() {
             </p>
           </div>
 
-          {/* CA + Dépenses */}
+          {/* CA + Marge brute */}
           <div className="grid grid-cols-2 gap-3">
             <KpiCard label="Chiffre d'affaires" value={formatMoney(rapport.benefice_net + rapport.total_depenses)} color="text-brand" />
-            <KpiCard label="Dépenses" value={formatMoney(rapport.total_depenses)} color="text-red-400" />
+            <KpiCard label="Marge brute" value={formatMoney(rapport.total_marge)} color="text-green-400" />
+          </div>
+
+          {/* Dépenses */}
+          <div className="bg-gray-800 rounded-xl p-4">
+            <p className="text-xs text-gray-400 mb-1">Dépenses</p>
+            <p className="text-xl font-bold text-red-400">{formatMoney(rapport.total_depenses)}</p>
           </div>
         </>
       )}

@@ -58,6 +58,7 @@ export interface Rapport {
   total_marge: number
   total_depenses: number
   benefice_net: number
+  chiffre_affaires?: number
   ventes: Vente[]
   depenses: Depense[]
 }

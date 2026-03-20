@@ -39,9 +39,11 @@ export default function DashboardHome() {
       const r = await getRapport(s.uid, debut, fin)
       r.total_marge = Number(r.total_marge)
       r.total_depenses = Number(r.total_depenses)
-      // Recalcul frontend : CA total - dépenses
+      // CA = somme des sous-totaux ventes
       const ca = (r.ventes ?? []).reduce((s, v) => s + Number(v.sous_total), 0)
-      r.benefice_net = ca - Number(r.total_depenses)
+      r.chiffre_affaires = ca
+      // Bénéfice net = marge brute - dépenses
+      r.benefice_net = r.total_marge - r.total_depenses
       setRapport(r)
     } catch {
       setError('Impossible de charger les données.')
@@ -160,7 +162,7 @@ export default function DashboardHome() {
 
           {/* CA + Marge brute */}
           <div className="grid grid-cols-2 gap-3">
-            <KpiCard label="Chiffre d'affaires" value={formatMoney(rapport.benefice_net + rapport.total_depenses)} color="text-brand" />
+            <KpiCard label="Chiffre d'affaires" value={formatMoney(rapport.chiffre_affaires ?? 0)} color="text-brand" />
             <KpiCard label="Marge brute" value={formatMoney(rapport.total_marge)} color="text-green-400" />
           </div>
 

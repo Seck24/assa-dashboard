@@ -40,7 +40,6 @@ export default function ActiverPage() {
       const res = await activerParCapture(session.uid, session.telephone, file)
       if (res.success) {
         setSuccess(res.message)
-        setTimeout(() => router.replace('/dashboard'), 2500)
       } else {
         setError(res.message || 'Paiement non reconnu.')
       }
@@ -110,7 +109,6 @@ export default function ActiverPage() {
           {success && (
             <div className="bg-green-500/10 border border-green-500/30 rounded-xl p-4 text-green-400 text-sm">
               {success}
-              <p className="text-xs text-green-500/60 mt-1">Redirection en cours...</p>
             </div>
           )}
 

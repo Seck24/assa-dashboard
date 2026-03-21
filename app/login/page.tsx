@@ -189,9 +189,9 @@ export default function LoginPage() {
                 className="w-full bg-gray-800 border border-gray-700 rounded-xl px-4 py-3 text-white placeholder-gray-500 focus:outline-none focus:border-brand" />
             </div>
             <div>
-              <label className="block text-sm text-gray-400 mb-1">Code commercial <span className="text-gray-600">(optionnel)</span></label>
+              <label className="block text-sm text-gray-400 mb-1">Code commercial</label>
               <input type="text" value={rCodeCom} onChange={e => setRCodeCom(e.target.value.toUpperCase())}
-                placeholder="Ex : COM001"
+                placeholder="Ex : COM001" required
                 className="w-full bg-gray-800 border border-gray-700 rounded-xl px-4 py-3 text-white placeholder-gray-500 focus:outline-none focus:border-brand uppercase" />
             </div>
             {rError && <p className="text-red-400 text-sm text-center">{rError}</p>}

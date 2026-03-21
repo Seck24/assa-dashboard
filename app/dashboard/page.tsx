@@ -1,6 +1,6 @@
 'use client'
 import { useEffect, useState } from 'react'
-import { useRouter } from 'next/navigation'
+import { useRouter, useSearchParams } from 'next/navigation'
 import { getRapport, resetPassword, effacerDonnees, Rapport } from '@/lib/api'
 import { getSession, clearSession } from '@/lib/auth'
 import { formatMoney, today } from '@/lib/format'
@@ -8,10 +8,12 @@ import { useDateRange } from '@/lib/useDateRange'
 
 export default function DashboardHome() {
   const router = useRouter()
+  const searchParams = useSearchParams()
   const [rapport, setRapport] = useState<Rapport | null>(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
   const { dateDebut, dateFin, setDateDebut, setDateFin, setRange } = useDateRange('accueil')
+  const [justActivated, setJustActivated] = useState(false)
 
   // Effacer données
   const [confirmEffacer, setConfirmEffacer] = useState(false)
@@ -69,16 +71,27 @@ export default function DashboardHome() {
 
   useEffect(() => {
     load(dateDebut, dateFin)
+    if (searchParams.get('activated') === '1') {
+      setJustActivated(true)
+      setTimeout(() => setJustActivated(false), 8000)
+      // Nettoyer l'URL
+      window.history.replaceState({}, '', '/dashboard')
+    }
   }, [])
 
   return (
     <div className="px-4 py-4 space-y-4">
 
-      {/* Compte activé */}
-      <div className="bg-green-500/10 border border-green-500/20 rounded-xl px-4 py-3 flex items-center gap-2">
-        <span className="text-green-400 text-lg">✓</span>
-        <span className="text-sm text-green-400 font-medium">Compte ASSA activé</span>
-      </div>
+      {/* Message de bienvenue après activation */}
+      {justActivated && (
+        <div className="bg-green-500/15 border border-green-500/30 rounded-xl px-4 py-4 flex flex-col gap-1 animate-pulse">
+          <div className="flex items-center gap-2">
+            <span className="text-green-400 text-xl">🎉</span>
+            <span className="text-base text-green-400 font-bold">Compte activé avec succès !</span>
+          </div>
+          <p className="text-green-400/70 text-xs ml-8">Bienvenue sur ASSA. Bonne gestion !</p>
+        </div>
+      )}
 
       {/* Date filter */}
       <div className="space-y-2">

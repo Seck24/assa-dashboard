@@ -1,8 +1,8 @@
 'use client'
-import { useState, useRef } from 'react'
+import { useState, useRef, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { getSession, clearSession } from '@/lib/auth'
-import { activerParCapture } from '@/lib/api'
+import { activerParCapture, checkAccess } from '@/lib/api'
 
 export default function ActiverPage() {
   const router = useRouter()
@@ -12,12 +12,28 @@ export default function ActiverPage() {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
   const [success, setSuccess] = useState('')
+  const [waiting, setWaiting] = useState(false)
 
   const session = getSession()
   if (typeof window !== 'undefined' && !session) {
     router.replace('/login')
     return null
   }
+
+  // Polling: vérifier toutes les 5s si le compte a été activé par l'admin
+  useEffect(() => {
+    if (!waiting || !session) return
+    const interval = setInterval(async () => {
+      try {
+        const res = await checkAccess(session.uid)
+        if (res.access_granted) {
+          clearInterval(interval)
+          router.replace('/dashboard?activated=1')
+        }
+      } catch {}
+    }, 5000)
+    return () => clearInterval(interval)
+  }, [waiting, session, router])
 
   function handleFile(e: React.ChangeEvent<HTMLInputElement>) {
     const f = e.target.files?.[0]
@@ -40,8 +56,9 @@ export default function ActiverPage() {
       const res = await activerParCapture(session.uid, session.telephone, file)
       if (res.success) {
         setSuccess(res.message)
+        setWaiting(true) // Démarre le polling
       } else {
-        setError(res.message || 'Paiement non reconnu.')
+        setError(res.message || 'Erreur lors de l\'envoi.')
       }
     } catch {
       setError('Erreur de connexion. Réessayez.')
@@ -65,76 +82,85 @@ export default function ActiverPage() {
           <p className="text-gray-500 text-xs mt-1">Envoyer la capture du reçu Wave ci-dessous</p>
         </div>
 
-        <form onSubmit={handleSubmit} className="flex flex-col gap-4">
-          {/* Zone upload */}
-          <div
-            onClick={() => fileRef.current?.click()}
-            className="border-2 border-dashed border-gray-600 hover:border-brand rounded-2xl p-6 text-center cursor-pointer transition-colors"
-          >
-            {preview ? (
-              <img src={preview} alt="Capture" className="max-h-64 mx-auto rounded-xl" />
-            ) : (
-              <div className="flex flex-col items-center gap-2 text-gray-400">
-                <span className="text-4xl">📷</span>
-                <p className="text-sm font-medium">Ajouter la capture du reçu</p>
-                <p className="text-xs text-gray-500">JPG, PNG — reçu de paiement Wave</p>
+        {!waiting ? (
+          <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+            <div
+              onClick={() => fileRef.current?.click()}
+              className="border-2 border-dashed border-gray-600 hover:border-brand rounded-2xl p-6 text-center cursor-pointer transition-colors"
+            >
+              {preview ? (
+                <img src={preview} alt="Capture" className="max-h-64 mx-auto rounded-xl" />
+              ) : (
+                <div className="flex flex-col items-center gap-2 text-gray-400">
+                  <span className="text-4xl">📷</span>
+                  <p className="text-sm font-medium">Ajouter la capture du reçu</p>
+                  <p className="text-xs text-gray-500">JPG, PNG — reçu de paiement Wave</p>
+                </div>
+              )}
+            </div>
+            <input
+              ref={fileRef}
+              type="file"
+              accept="image/*"
+              capture="environment"
+              onChange={handleFile}
+              className="hidden"
+            />
+
+            {preview && (
+              <button
+                type="button"
+                onClick={() => { setFile(null); setPreview(null); setError(''); setSuccess('') }}
+                className="text-xs text-gray-400 hover:text-white transition-colors"
+              >
+                Changer d&apos;image
+              </button>
+            )}
+
+            {error && (
+              <div className="bg-red-500/10 border border-red-500/30 rounded-xl p-4 text-red-400 text-sm">
+                {error}
               </div>
             )}
-          </div>
-          <input
-            ref={fileRef}
-            type="file"
-            accept="image/*"
-            capture="environment"
-            onChange={handleFile}
-            className="hidden"
-          />
 
-          {preview && (
+            <button
+              type="submit"
+              disabled={!file || loading}
+              className="w-full bg-brand hover:bg-brand/90 disabled:opacity-40 disabled:cursor-not-allowed text-white font-bold py-4 rounded-xl transition-colors text-base"
+            >
+              {loading ? (
+                <span className="flex items-center justify-center gap-2">
+                  <span className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                  Envoi en cours...
+                </span>
+              ) : (
+                'Envoyer la capture'
+              )}
+            </button>
+
             <button
               type="button"
-              onClick={() => { setFile(null); setPreview(null); setError(''); setSuccess('') }}
-              className="text-xs text-gray-400 hover:text-white transition-colors"
+              onClick={() => { clearSession(); router.replace('/login') }}
+              className="text-xs text-gray-500 hover:text-gray-300 transition-colors text-center"
             >
-              Changer d&apos;image
+              Retour à la connexion
             </button>
-          )}
-
-          {error && (
-            <div className="bg-red-500/10 border border-red-500/30 rounded-xl p-4 text-red-400 text-sm">
-              {error}
-            </div>
-          )}
-
-          {success && (
-            <div className="bg-green-500/10 border border-green-500/30 rounded-xl p-4 text-green-400 text-sm">
+          </form>
+        ) : (
+          /* État d'attente après envoi de la capture */
+          <div className="flex flex-col items-center gap-4 text-center">
+            <div className="bg-green-500/10 border border-green-500/20 rounded-xl p-4 text-green-400 text-sm">
               {success}
             </div>
-          )}
-
-          <button
-            type="submit"
-            disabled={!file || loading || !!success}
-            className="w-full bg-brand hover:bg-brand/90 disabled:opacity-40 disabled:cursor-not-allowed text-white font-bold py-4 rounded-xl transition-colors text-base"
-          >
-            {loading ? (
-              <span className="flex items-center justify-center gap-2">
-                <span className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                Vérification en cours...
-              </span>
-            ) : (
-              'Envoyer la capture'
-            )}
-          </button>
-
-          <button
-            type="button"
-            onClick={() => { clearSession(); router.replace('/login') }}
-            className="text-xs text-gray-500 hover:text-gray-300 transition-colors text-center"
-          >
-            Retour à la connexion
-          </button>
-        </form>
+            <div className="flex items-center gap-3 text-gray-400 text-sm">
+              <span className="w-5 h-5 border-2 border-gray-500 border-t-brand rounded-full animate-spin" />
+              En attente de validation...
+            </div>
+            <p className="text-gray-500 text-xs">
+              La page se mettra à jour automatiquement une fois le compte activé.
+            </p>
+          </div>
+        )}
       </div>
     </div>
   )

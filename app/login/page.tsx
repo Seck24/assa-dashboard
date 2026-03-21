@@ -83,6 +83,7 @@ export default function LoginPage() {
   const [rNomComplet, setRNomComplet] = useState('')
   const [rNom, setRNom] = useState('')
   const [rVille, setRVille] = useState('')
+  const [rCodeCom, setRCodeCom] = useState('')
   const [rError, setRError] = useState('')
   const [rLoading, setRLoading] = useState(false)
 
@@ -110,7 +111,7 @@ export default function LoginPage() {
     setRLoading(true)
     const telephone = buildPhone(rCode, rLocal)
     try {
-      const res = await inscription(telephone, rMdp, rNom, rVille, rNomComplet)
+      const res = await inscription(telephone, rMdp, rNom, rVille, rNomComplet, rCodeCom)
       if (!res.success) { setRError(res.error || "Erreur lors de l'inscription."); return }
       saveSession({ uid: res.uid, nom_commerce: res.nom_commerce, telephone })
       router.replace('/dashboard/activer')
@@ -186,6 +187,12 @@ export default function LoginPage() {
               <input type="text" value={rVille} onChange={e => setRVille(e.target.value)}
                 placeholder="Ex : Yopougon" required
                 className="w-full bg-gray-800 border border-gray-700 rounded-xl px-4 py-3 text-white placeholder-gray-500 focus:outline-none focus:border-brand" />
+            </div>
+            <div>
+              <label className="block text-sm text-gray-400 mb-1">Code commercial <span className="text-gray-600">(optionnel)</span></label>
+              <input type="text" value={rCodeCom} onChange={e => setRCodeCom(e.target.value.toUpperCase())}
+                placeholder="Ex : COM001"
+                className="w-full bg-gray-800 border border-gray-700 rounded-xl px-4 py-3 text-white placeholder-gray-500 focus:outline-none focus:border-brand uppercase" />
             </div>
             {rError && <p className="text-red-400 text-sm text-center">{rError}</p>}
             <button type="submit" disabled={rLoading}

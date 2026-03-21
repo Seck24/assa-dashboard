@@ -129,13 +129,6 @@ export default function ActiverPage() {
             )}
           </button>
 
-          <button
-            type="button"
-            onClick={() => router.push('/dashboard')}
-            className="text-sm text-gray-500 hover:text-gray-300 transition-colors text-center"
-          >
-            Retour au tableau de bord
-          </button>
         </form>
       </div>
     </div>

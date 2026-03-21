@@ -58,13 +58,12 @@ export default function ActiverPage() {
           <div className="w-16 h-16 mx-auto rounded-2xl bg-brand flex items-center justify-center mb-4">
             <span className="text-3xl">💳</span>
           </div>
-          <h1 className="text-2xl font-bold text-white">Activer mon compte</h1>
+          <h1 className="text-2xl font-bold text-white">Activation du compte</h1>
           <p className="text-gray-400 text-sm mt-2">
-            Effectue un paiement de <strong className="text-brand">1 500 FCFA minimum</strong> via
-            Wave ou Orange Money au numéro :
+            Effectuer un paiement Wave de <strong className="text-brand">15 000 FCFA</strong> au numéro ci-dessous pour obtenir un <strong className="text-brand">accès à vie</strong>.
           </p>
-          <p className="text-2xl font-bold text-brand mt-3 tracking-wider">07 87 38 62 89</p>
-          <p className="text-gray-500 text-xs mt-1">Puis envoie la capture ci-dessous</p>
+          <p className="text-2xl font-bold text-brand mt-3 tracking-wider">05 08 06 34 37</p>
+          <p className="text-gray-500 text-xs mt-1">Envoyer la capture du reçu Wave ci-dessous</p>
         </div>
 
         <form onSubmit={handleSubmit} className="flex flex-col gap-4">
@@ -78,8 +77,8 @@ export default function ActiverPage() {
             ) : (
               <div className="flex flex-col items-center gap-2 text-gray-400">
                 <span className="text-4xl">📷</span>
-                <p className="text-sm font-medium">Clique pour ajouter ta capture</p>
-                <p className="text-xs text-gray-500">JPG, PNG — reçu Wave ou Orange Money</p>
+                <p className="text-sm font-medium">Ajouter la capture du reçu</p>
+                <p className="text-xs text-gray-500">JPG, PNG — reçu de paiement Wave</p>
               </div>
             )}
           </div>

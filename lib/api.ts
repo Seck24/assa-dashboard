@@ -101,6 +101,20 @@ export interface Rappel {
   date_limite: string
 }
 
+// Activation par capture de paiement
+export async function activerParCapture(uid: string, telephone: string, image: File) {
+  const formData = new FormData()
+  formData.append('uid', uid)
+  formData.append('telephone', telephone)
+  formData.append('capture', image)
+  const res = await fetch(`${BASE}/activation-capture`, {
+    method: 'POST',
+    body: formData,
+  })
+  if (!res.ok) throw new Error(`HTTP ${res.status}`)
+  return res.json() as Promise<{ success: boolean; message: string }>
+}
+
 export async function effacerDonnees(user_uid: string) {
   return post<{ success: boolean }>('effacer-donnees', { user_uid })
 }

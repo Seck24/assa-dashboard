@@ -113,7 +113,7 @@ export default function LoginPage() {
       const res = await inscription(telephone, rMdp, rNom, rVille, rNomComplet)
       if (!res.success) { setRError(res.error || "Erreur lors de l'inscription."); return }
       saveSession({ uid: res.uid, nom_commerce: res.nom_commerce, telephone })
-      router.replace('/dashboard')
+      router.replace('/dashboard/activer')
     } catch {
       setRError('Erreur de connexion. Vérifiez votre réseau.')
     } finally {

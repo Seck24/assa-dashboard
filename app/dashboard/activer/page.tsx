@@ -1,7 +1,7 @@
 'use client'
 import { useState, useRef } from 'react'
 import { useRouter } from 'next/navigation'
-import { getSession } from '@/lib/auth'
+import { getSession, clearSession } from '@/lib/auth'
 import { activerParCapture } from '@/lib/api'
 
 export default function ActiverPage() {
@@ -129,6 +129,13 @@ export default function ActiverPage() {
             )}
           </button>
 
+          <button
+            type="button"
+            onClick={() => { clearSession(); router.replace('/login') }}
+            className="text-xs text-gray-500 hover:text-gray-300 transition-colors text-center"
+          >
+            Retour à la connexion
+          </button>
         </form>
       </div>
     </div>

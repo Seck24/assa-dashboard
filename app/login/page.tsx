@@ -4,6 +4,7 @@ import { useRouter } from 'next/navigation'
 import { login, inscription, resetPassword } from '@/lib/api'
 import { saveSession } from '@/lib/auth'
 import { PAYS, buildPhone } from '@/lib/pays'
+import { sanitizeText, sanitizeName, isValidPhone, isValidPassword } from '@/lib/sanitize'
 
 function EyeIcon({ open }: { open: boolean }) {
   return open ? (
@@ -99,8 +100,10 @@ export default function LoginPage() {
   async function handleLogin(e: React.FormEvent) {
     e.preventDefault()
     setLError('')
-    setLLoading(true)
     const telephone = buildPhone(lCode, lLocal)
+    if (!isValidPhone(telephone)) { setLError('Numéro de téléphone invalide.'); return }
+    if (!isValidPassword(lMdp)) { setLError('Mot de passe invalide.'); return }
+    setLLoading(true)
     try {
       const res = await login(telephone, lMdp)
       if (!res.success) { setLError('Téléphone ou mot de passe incorrect.'); return }
@@ -118,11 +121,17 @@ export default function LoginPage() {
   async function handleRegister(e: React.FormEvent) {
     e.preventDefault()
     setRError('')
-    if (rMdp.length < 8) { setRError('Mot de passe trop court (min 8 caractères).'); return }
-    setRLoading(true)
     const telephone = buildPhone(rCode, rLocal)
+    if (!isValidPhone(telephone)) { setRError('Numéro de téléphone invalide.'); return }
+    if (!isValidPassword(rMdp)) { setRError('Mot de passe trop court (min 8 caractères).'); return }
+    if (!rNom.trim() || !rVille.trim()) { setRError('Nom du commerce et ville requis.'); return }
+    setRLoading(true)
     try {
-      const res = await inscription(telephone, rMdp, rNom, rVille, rNomComplet, rCodeCom)
+      const safNom = sanitizeName(rNom)
+      const safVille = sanitizeText(rVille, 50)
+      const safNomComplet = sanitizeName(rNomComplet)
+      const safCodeCom = sanitizeText(rCodeCom, 20)
+      const res = await inscription(telephone, rMdp, safNom, safVille, safNomComplet, safCodeCom)
       if (!res.success) { setRError(res.error || "Erreur lors de l'inscription."); return }
       const uid = res.uid || res.data?.uid || ''
       const nom = res.nom_commerce || res.data?.nom_commerce || rNom
@@ -139,10 +148,11 @@ export default function LoginPage() {
     e.preventDefault()
     setFpError('')
     setFpSuccess('')
-    if (fpMdp.length < 8) { setFpError('Mot de passe trop court (min 8 caractères).'); return }
+    const telephone = buildPhone(fpCode, fpLocal)
+    if (!isValidPhone(telephone)) { setFpError('Numéro de téléphone invalide.'); return }
+    if (!isValidPassword(fpMdp)) { setFpError('Mot de passe trop court (min 8 caractères).'); return }
     if (fpMdp !== fpConfirm) { setFpError('Les mots de passe ne correspondent pas.'); return }
     setFpLoading(true)
-    const telephone = buildPhone(fpCode, fpLocal)
     try {
       const res = await resetPassword(telephone, fpMdp)
       if (res.success) {

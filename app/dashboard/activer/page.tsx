@@ -92,9 +92,9 @@ export default function ActiverPage() {
                 <img src={preview} alt="Capture" className="max-h-64 mx-auto rounded-xl" />
               ) : (
                 <div className="flex flex-col items-center gap-2 text-gray-400">
-                  <span className="text-4xl">📷</span>
+                  <span className="text-4xl">🖼️</span>
                   <p className="text-sm font-medium">Ajouter la capture du reçu</p>
-                  <p className="text-xs text-gray-500">JPG, PNG — reçu de paiement Wave</p>
+                  <p className="text-xs text-gray-500">Choisir depuis la galerie — capture d&apos;écran du reçu Wave</p>
                 </div>
               )}
             </div>
@@ -102,7 +102,6 @@ export default function ActiverPage() {
               ref={fileRef}
               type="file"
               accept="image/*"
-              capture="environment"
               onChange={handleFile}
               className="hidden"
             />

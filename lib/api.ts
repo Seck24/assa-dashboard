@@ -6,8 +6,8 @@ async function post<T>(path: string, body: object): Promise<T> {
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(body),
   })
-  if (!res.ok) throw new Error(`HTTP ${res.status}`)
-  return res.json()
+  const data = await res.json()
+  return data
 }
 
 // Auth
@@ -112,7 +112,6 @@ export async function activerParCapture(uid: string, telephone: string, image: F
     method: 'POST',
     body: formData,
   })
-  if (!res.ok) throw new Error(`HTTP ${res.status}`)
   return res.json() as Promise<{ success: boolean; message: string }>
 }
 

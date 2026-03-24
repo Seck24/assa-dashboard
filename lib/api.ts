@@ -16,14 +16,14 @@ export async function checkAccess(uid: string) {
 }
 
 export async function login(telephone: string, mot_de_passe: string) {
-  return post<{ success: boolean; uid: string; nom_commerce: string }>('login', {
+  return post<{ success: boolean; uid: string; nom_commerce: string; data?: { uid: string; nom_commerce: string } }>('login', {
     telephone,
     mot_de_passe,
   })
 }
 
 export async function inscription(telephone: string, mot_de_passe: string, nom_commerce: string, ville_commune: string, nom_complet = '', code_commercial = '') {
-  return post<{ success: boolean; uid: string; nom_commerce: string; error?: string }>('inscription', {
+  return post<{ success: boolean; uid: string; nom_commerce: string; error?: string; data?: { uid: string; nom_commerce: string } }>('inscription', {
     telephone,
     mot_de_passe,
     nom_commerce,

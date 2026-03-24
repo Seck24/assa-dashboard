@@ -95,7 +95,9 @@ export default function LoginPage() {
     try {
       const res = await login(telephone, lMdp)
       if (!res.success) { setLError('Téléphone ou mot de passe incorrect.'); return }
-      saveSession({ uid: res.uid, nom_commerce: res.nom_commerce, telephone })
+      const uid = res.uid || res.data?.uid || ''
+      const nom = res.nom_commerce || res.data?.nom_commerce || ''
+      saveSession({ uid, nom_commerce: nom, telephone })
       router.replace('/dashboard')
     } catch {
       setLError('Erreur de connexion. Vérifiez votre réseau.')
@@ -113,7 +115,9 @@ export default function LoginPage() {
     try {
       const res = await inscription(telephone, rMdp, rNom, rVille, rNomComplet, rCodeCom)
       if (!res.success) { setRError(res.error || "Erreur lors de l'inscription."); return }
-      saveSession({ uid: res.uid, nom_commerce: res.nom_commerce, telephone })
+      const uid = res.uid || res.data?.uid || ''
+      const nom = res.nom_commerce || res.data?.nom_commerce || rNom
+      saveSession({ uid, nom_commerce: nom, telephone })
       router.replace('/dashboard/activer')
     } catch {
       setRError('Erreur de connexion. Vérifiez votre réseau.')

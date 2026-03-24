@@ -118,7 +118,7 @@ export default function LoginPage() {
   async function handleRegister(e: React.FormEvent) {
     e.preventDefault()
     setRError('')
-    if (rMdp.length < 4) { setRError('Mot de passe trop court (min 4 caractères).'); return }
+    if (rMdp.length < 8) { setRError('Mot de passe trop court (min 8 caractères).'); return }
     setRLoading(true)
     const telephone = buildPhone(rCode, rLocal)
     try {
@@ -139,7 +139,7 @@ export default function LoginPage() {
     e.preventDefault()
     setFpError('')
     setFpSuccess('')
-    if (fpMdp.length < 4) { setFpError('Mot de passe trop court (min 4 caractères).'); return }
+    if (fpMdp.length < 8) { setFpError('Mot de passe trop court (min 8 caractères).'); return }
     if (fpMdp !== fpConfirm) { setFpError('Les mots de passe ne correspondent pas.'); return }
     setFpLoading(true)
     const telephone = buildPhone(fpCode, fpLocal)

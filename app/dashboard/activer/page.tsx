@@ -38,6 +38,15 @@ export default function ActiverPage() {
   function handleFile(e: React.ChangeEvent<HTMLInputElement>) {
     const f = e.target.files?.[0]
     if (!f) return
+    const allowedTypes = ['image/jpeg', 'image/png', 'image/webp']
+    if (!allowedTypes.includes(f.type)) {
+      setError('Format non supporté. Utilisez JPG, PNG ou WebP.')
+      return
+    }
+    if (f.size > 5 * 1024 * 1024) {
+      setError('Image trop lourde (max 5 Mo).')
+      return
+    }
     setFile(f)
     setError('')
     setSuccess('')

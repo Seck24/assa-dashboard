@@ -10,20 +10,29 @@ async function post<T>(path: string, body: object): Promise<T> {
   return data
 }
 
-// Auth
+// Auth — passe par les API routes locales (rate limited, URL n8n cachée)
+async function authPost<T>(path: string, body: object): Promise<T> {
+  const res = await fetch(`/api/auth/${path}`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(body),
+  })
+  return res.json() as Promise<T>
+}
+
 export async function checkAccess(uid: string) {
   return post<{ access_granted: boolean; account_status: string; trial_remaining_days: number; message: string }>('access-check', { uid })
 }
 
 export async function login(telephone: string, mot_de_passe: string) {
-  return post<{ success: boolean; uid: string; nom_commerce: string; data?: { uid: string; nom_commerce: string } }>('login', {
+  return authPost<{ success: boolean; uid: string; nom_commerce: string; error?: string; data?: { uid: string; nom_commerce: string } }>('login', {
     telephone,
     mot_de_passe,
   })
 }
 
 export async function inscription(telephone: string, mot_de_passe: string, nom_commerce: string, ville_commune: string, nom_complet = '', code_commercial = '') {
-  return post<{ success: boolean; uid: string; nom_commerce: string; error?: string; data?: { uid: string; nom_commerce: string } }>('inscription', {
+  return authPost<{ success: boolean; uid: string; nom_commerce: string; error?: string; data?: { uid: string; nom_commerce: string } }>('register', {
     telephone,
     mot_de_passe,
     nom_commerce,
@@ -34,7 +43,7 @@ export async function inscription(telephone: string, mot_de_passe: string, nom_c
 }
 
 export async function resetPassword(telephone: string, mot_de_passe: string) {
-  return post<{ success: boolean; message: string; uid?: string; telephone?: string }>('reset-password', {
+  return authPost<{ success: boolean; message: string }>('reset', {
     telephone,
     mot_de_passe,
   })

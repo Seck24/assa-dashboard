@@ -1,6 +1,6 @@
 'use client'
 import { useEffect, useState } from 'react'
-import { useRouter, useSearchParams } from 'next/navigation'
+import { useRouter } from 'next/navigation'
 import { getRapport, resetPassword, effacerDonnees, Rapport } from '@/lib/api'
 import { getSession, clearSession } from '@/lib/auth'
 import { formatMoney, today } from '@/lib/format'
@@ -8,7 +8,6 @@ import { useDateRange } from '@/lib/useDateRange'
 
 export default function DashboardHome() {
   const router = useRouter()
-  const searchParams = useSearchParams()
   const [rapport, setRapport] = useState<Rapport | null>(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
@@ -71,7 +70,7 @@ export default function DashboardHome() {
 
   useEffect(() => {
     load(dateDebut, dateFin)
-    if (searchParams.get('activated') === '1') {
+    if (typeof window !== 'undefined' && new URLSearchParams(window.location.search).get('activated') === '1') {
       setJustActivated(true)
       setTimeout(() => setJustActivated(false), 8000)
       // Nettoyer l'URL

@@ -1,12 +1,17 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { rateLimit } from '@/lib/rate-limit'
 import { n8nPost } from '@/lib/n8n'
+import { checkOrigin } from '@/lib/csrf'
 
 // 3 inscriptions par 30 minutes par IP
 const MAX_ATTEMPTS = 3
 const WINDOW_MS = 30 * 60 * 1000
 
 export async function POST(req: NextRequest) {
+  if (!checkOrigin(req)) {
+    return NextResponse.json({ success: false, error: 'Origine non autorisée' }, { status: 403 })
+  }
+
   const ip = req.headers.get('x-forwarded-for')?.split(',')[0]?.trim() || 'unknown'
   const rl = rateLimit(ip, 'register', MAX_ATTEMPTS, WINDOW_MS)
 

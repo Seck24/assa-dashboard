@@ -26,7 +26,7 @@ export default function ActiverPage() {
     const interval = setInterval(async () => {
       try {
         const res = await checkAccess(session.uid)
-        if (res.access_granted) {
+        if (res.account_status === 'actif') {
           clearInterval(interval)
           router.replace('/dashboard?activated=1')
         }

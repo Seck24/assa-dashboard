@@ -1,7 +1,7 @@
 'use client'
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { login, inscription } from '@/lib/api'
+import { login, inscription, resetPassword } from '@/lib/api'
 import { saveSession } from '@/lib/auth'
 import { PAYS, buildPhone } from '@/lib/pays'
 
@@ -67,7 +67,7 @@ function PhoneInput({ code, onCode, local, onLocal }: {
 
 export default function LoginPage() {
   const router = useRouter()
-  const [tab, setTab] = useState<'login' | 'register'>('login')
+  const [tab, setTab] = useState<'login' | 'register' | 'reset'>('login')
 
   // Login
   const [lCode, setLCode] = useState('+225')
@@ -86,6 +86,15 @@ export default function LoginPage() {
   const [rCodeCom, setRCodeCom] = useState('')
   const [rError, setRError] = useState('')
   const [rLoading, setRLoading] = useState(false)
+
+  // Reset password
+  const [fpCode, setFpCode] = useState('+225')
+  const [fpLocal, setFpLocal] = useState('')
+  const [fpMdp, setFpMdp] = useState('')
+  const [fpConfirm, setFpConfirm] = useState('')
+  const [fpError, setFpError] = useState('')
+  const [fpSuccess, setFpSuccess] = useState('')
+  const [fpLoading, setFpLoading] = useState(false)
 
   async function handleLogin(e: React.FormEvent) {
     e.preventDefault()
@@ -126,6 +135,29 @@ export default function LoginPage() {
     }
   }
 
+  async function handleReset(e: React.FormEvent) {
+    e.preventDefault()
+    setFpError('')
+    setFpSuccess('')
+    if (fpMdp.length < 4) { setFpError('Mot de passe trop court (min 4 caractères).'); return }
+    if (fpMdp !== fpConfirm) { setFpError('Les mots de passe ne correspondent pas.'); return }
+    setFpLoading(true)
+    const telephone = buildPhone(fpCode, fpLocal)
+    try {
+      const res = await resetPassword(telephone, fpMdp)
+      if (res.uid || res.telephone) {
+        setFpSuccess('Mot de passe réinitialisé. Vous pouvez vous connecter.')
+        setTimeout(() => setTab('login'), 2000)
+      } else {
+        setFpError('Numéro de téléphone introuvable.')
+      }
+    } catch {
+      setFpError('Erreur de connexion. Vérifiez votre réseau.')
+    } finally {
+      setFpLoading(false)
+    }
+  }
+
   return (
     <div className="min-h-screen flex flex-col items-center justify-center px-6 bg-gray-950">
       <div className="w-full max-w-sm">
@@ -160,6 +192,40 @@ export default function LoginPage() {
             <button type="submit" disabled={lLoading}
               className="w-full bg-brand text-gray-950 font-bold rounded-xl py-3 mt-2 disabled:opacity-50 active:scale-95 transition-transform">
               {lLoading ? 'Connexion…' : 'Se connecter'}
+            </button>
+            <button type="button" onClick={() => setTab('reset')}
+              className="w-full text-gray-500 hover:text-brand text-sm mt-3 transition-colors">
+              Mot de passe oublié ?
+            </button>
+          </form>
+        )}
+
+        {tab === 'reset' && (
+          <form onSubmit={handleReset} className="space-y-4">
+            <p className="text-gray-400 text-sm text-center mb-2">
+              Entrez votre numéro et choisissez un nouveau mot de passe.
+            </p>
+            <div>
+              <label className="block text-sm text-gray-400 mb-1">Téléphone</label>
+              <PhoneInput code={fpCode} onCode={setFpCode} local={fpLocal} onLocal={setFpLocal} />
+            </div>
+            <div>
+              <label className="block text-sm text-gray-400 mb-1">Nouveau mot de passe</label>
+              <PasswordInput value={fpMdp} onChange={setFpMdp} placeholder="Min 4 caractères" />
+            </div>
+            <div>
+              <label className="block text-sm text-gray-400 mb-1">Confirmer le mot de passe</label>
+              <PasswordInput value={fpConfirm} onChange={setFpConfirm} placeholder="Confirmez" />
+            </div>
+            {fpError && <p className="text-red-400 text-sm text-center">{fpError}</p>}
+            {fpSuccess && <p className="text-green-400 text-sm text-center">{fpSuccess}</p>}
+            <button type="submit" disabled={fpLoading}
+              className="w-full bg-brand text-gray-950 font-bold rounded-xl py-3 mt-2 disabled:opacity-50 active:scale-95 transition-transform">
+              {fpLoading ? 'Réinitialisation…' : 'Réinitialiser'}
+            </button>
+            <button type="button" onClick={() => setTab('login')}
+              className="w-full text-gray-500 hover:text-brand text-sm mt-1 transition-colors">
+              Retour à la connexion
             </button>
           </form>
         )}

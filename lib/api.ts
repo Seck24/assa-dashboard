@@ -34,7 +34,7 @@ export async function inscription(telephone: string, mot_de_passe: string, nom_c
 }
 
 export async function resetPassword(telephone: string, mot_de_passe: string) {
-  return post<{ uid: string; telephone: string; nom_commerce: string }>('reset-password', {
+  return post<{ success: boolean; message: string; uid?: string; telephone?: string }>('reset-password', {
     telephone,
     mot_de_passe,
   })

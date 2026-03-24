@@ -145,11 +145,11 @@ export default function LoginPage() {
     const telephone = buildPhone(fpCode, fpLocal)
     try {
       const res = await resetPassword(telephone, fpMdp)
-      if (res.uid || res.telephone) {
-        setFpSuccess('Mot de passe réinitialisé. Vous pouvez vous connecter.')
+      if (res.success) {
+        setFpSuccess(res.message || 'Mot de passe réinitialisé. Vous pouvez vous connecter.')
         setTimeout(() => setTab('login'), 2000)
       } else {
-        setFpError('Numéro de téléphone introuvable.')
+        setFpError(res.message || 'Numéro de téléphone introuvable.')
       }
     } catch {
       setFpError('Erreur de connexion. Vérifiez votre réseau.')

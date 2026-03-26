@@ -84,7 +84,7 @@ export interface Rapport {
 }
 
 export async function getRapport(user_uid: string, date_debut: string, date_fin: string) {
-  return post<Rapport>('assa-rapport', { user_uid, date_debut, date_fin }, {
+  return post<Rapport>('assa-rapport', { user_uid, date_debut, date_fin: date_fin + 'T23:59:59' }, {
     total_marge: 0, total_depenses: 0, benefice_net: 0, ventes: [], depenses: [],
   })
 }
@@ -113,7 +113,7 @@ export interface StatServeur {
 }
 
 export async function getStatsServeurs(user_uid: string, date_debut: string, date_fin: string) {
-  return post<{ success: boolean; serveurs: StatServeur[] }>('stats-serveurs', { user_uid, date_debut, date_fin }, {
+  return post<{ success: boolean; serveurs: StatServeur[] }>('stats-serveurs', { user_uid, date_debut, date_fin: date_fin + 'T23:59:59' }, {
     success: true, serveurs: [],
   })
 }

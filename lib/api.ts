@@ -1,13 +1,22 @@
 const BASE = 'https://automation.preo-ia.info/webhook'
 
-async function post<T>(path: string, body: object): Promise<T> {
+async function post<T>(path: string, body: object, fallback?: T): Promise<T> {
   const res = await fetch(`${BASE}/${path}`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(body),
   })
-  const data = await res.json()
-  return data
+  const text = await res.text()
+  if (!text) {
+    if (fallback !== undefined) return fallback
+    return {} as T
+  }
+  try {
+    return JSON.parse(text) as T
+  } catch {
+    if (fallback !== undefined) return fallback
+    return {} as T
+  }
 }
 
 // Auth — passe par les API routes locales (rate limited, URL n8n cachée)
@@ -75,7 +84,9 @@ export interface Rapport {
 }
 
 export async function getRapport(user_uid: string, date_debut: string, date_fin: string) {
-  return post<Rapport>('assa-rapport', { user_uid, date_debut, date_fin })
+  return post<Rapport>('assa-rapport', { user_uid, date_debut, date_fin }, {
+    total_marge: 0, total_depenses: 0, benefice_net: 0, ventes: [], depenses: [],
+  })
 }
 
 // Produits
@@ -89,7 +100,9 @@ export interface Produit {
 }
 
 export async function getProduits(user_uid: string) {
-  return post<{ success: boolean; produits: Produit[] }>('list-produits', { user_uid })
+  return post<{ success: boolean; produits: Produit[] }>('list-produits', { user_uid }, {
+    success: true, produits: [],
+  })
 }
 
 // Stats serveurs
@@ -100,7 +113,9 @@ export interface StatServeur {
 }
 
 export async function getStatsServeurs(user_uid: string, date_debut: string, date_fin: string) {
-  return post<{ success: boolean; serveurs: StatServeur[] }>('stats-serveurs', { user_uid, date_debut, date_fin })
+  return post<{ success: boolean; serveurs: StatServeur[] }>('stats-serveurs', { user_uid, date_debut, date_fin }, {
+    success: true, serveurs: [],
+  })
 }
 
 // Rappels
@@ -129,7 +144,9 @@ export async function effacerDonnees(user_uid: string) {
 }
 
 export async function getRappels(user_uid: string) {
-  return post<{ success: boolean; rappels: Rappel[] }>('list-rappels', { user_uid })
+  return post<{ success: boolean; rappels: Rappel[] }>('list-rappels', { user_uid }, {
+    success: true, rappels: [],
+  })
 }
 
 // Livraisons
@@ -142,7 +159,9 @@ export interface Livraison {
 }
 
 export async function getLivraisons(user_uid: string) {
-  return post<{ success: boolean; livraisons: Livraison[] }>('list-livraisons-v2', { user_uid })
+  return post<{ success: boolean; livraisons: Livraison[] }>('list-livraisons-v2', { user_uid }, {
+    success: true, livraisons: [],
+  })
 }
 
 export async function addLivraison(user_uid: string, uid: string, total_unites: number) {
@@ -165,7 +184,9 @@ export interface Inventaire {
 }
 
 export async function getInventaires(user_uid: string) {
-  return post<{ success: boolean; inventaires: Inventaire[] }>('list-inventaires-v2', { user_uid })
+  return post<{ success: boolean; inventaires: Inventaire[] }>('list-inventaires-v2', { user_uid }, {
+    success: true, inventaires: [],
+  })
 }
 
 export async function updateInventaire(user_uid: string, uid: string, stock_actuel: number) {

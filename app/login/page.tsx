@@ -106,7 +106,7 @@ export default function LoginPage() {
     setLLoading(true)
     try {
       const res = await login(telephone, lMdp)
-      if (!res.success) { setLError('Téléphone ou mot de passe incorrect.'); return }
+      if (!res.success) { setLError(res.error || 'Téléphone ou mot de passe incorrect.'); return }
       const uid = res.uid || res.data?.uid || ''
       const nom = res.nom_commerce || res.data?.nom_commerce || ''
       saveSession({ uid, nom_commerce: nom, telephone })

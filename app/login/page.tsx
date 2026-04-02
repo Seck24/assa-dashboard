@@ -125,6 +125,7 @@ export default function LoginPage() {
     if (!isValidPhone(telephone)) { setRError('Numéro de téléphone invalide.'); return }
     if (!isValidPassword(rMdp)) { setRError('Mot de passe trop court (min 8 caractères).'); return }
     if (!rNom.trim() || !rVille.trim()) { setRError('Nom du commerce et ville requis.'); return }
+    if (!rCodeCom.trim()) { setRError('Code commercial requis. Demandez-le à votre commercial.'); return }
     setRLoading(true)
     try {
       const safNom = sanitizeName(rNom)

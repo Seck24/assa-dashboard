@@ -110,7 +110,11 @@ export default function LoginPage() {
       const uid = res.uid || res.data?.uid || ''
       const nom = res.nom_commerce || res.data?.nom_commerce || ''
       saveSession({ uid, nom_commerce: nom, telephone })
-      router.replace('/dashboard')
+      if ((res as { needs_activation?: boolean }).needs_activation) {
+        router.replace('/dashboard/activer')
+      } else {
+        router.replace('/dashboard')
+      }
     } catch {
       setLError('Erreur de connexion. Vérifiez votre réseau.')
     } finally {

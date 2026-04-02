@@ -37,6 +37,17 @@ export async function POST(req: NextRequest) {
       mot_de_passe,
     })
 
+    // Si le compte est inactif, utiliser le fallback pour récupérer l'uid
+    if (!data.success && data.error?.includes('en attente')) {
+      const fallback = await n8nPost<{ success: boolean; uid: string; nom_commerce: string; needs_activation?: boolean; error?: string }>('login-inactive', {
+        telephone,
+        mot_de_passe,
+      })
+      if (fallback.success && fallback.uid) {
+        return NextResponse.json({ success: true, uid: fallback.uid, nom_commerce: fallback.nom_commerce, needs_activation: true })
+      }
+    }
+
     return NextResponse.json(data)
   } catch {
     return NextResponse.json({ success: false, error: 'Erreur serveur' }, { status: 500 })

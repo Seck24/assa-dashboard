@@ -1,18 +1,121 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Manrope:wght@600;700;800&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
+/* ── Obsidian Sommelier — base ─────────────────────────────── */
+:root {
+  --obs-bg:           #0e0e0e;
+  --obs-s0:           #000000;
+  --obs-s1:           #131313;
+  --obs-s2:           #1a1919;
+  --obs-s3:           #201f1f;
+  --obs-s4:           #262626;
+  --obs-outline:      rgba(255,255,255,0.06);
+  --obs-outline-hi:   rgba(255,255,255,0.10);
+  --obs-primary:      #00c853;
+  --obs-primary-dim:  #00a650;
+  --obs-on-primary:   #000000;
+  --obs-on-surface:   #ffffff;
+  --obs-on-surface-v: #adaaaa;
+  --obs-secondary:    #00e3fd;
+  --obs-tertiary:     #ffbd5c;
+}
+
 @layer base {
-  html {
-    -webkit-tap-highlight-color: transparent;
-  }
+  html { -webkit-tap-highlight-color: transparent; }
   body {
-    @apply bg-gray-950 text-white;
+    background-color: var(--obs-bg);
+    color: var(--obs-on-surface);
+    font-family: 'Inter', sans-serif;
+    min-height: 100vh;
   }
 }
 
-@layer utilities {
-  .safe-bottom {
-    padding-bottom: env(safe-area-inset-bottom, 16px);
-  }
+/* ── Tailwind gray overrides → Obsidian surfaces ─────────── */
+.bg-gray-950 { background-color: var(--obs-bg)    !important; }
+.bg-gray-900 { background-color: var(--obs-s1)    !important; }
+.bg-gray-800 { background-color: var(--obs-s3)    !important; }
+.bg-gray-700 { background-color: var(--obs-s4)    !important; }
+.bg-gray-600 { background-color: #333333          !important; }
+
+.border-gray-900 { border-color: var(--obs-outline)    !important; }
+.border-gray-800 { border-color: var(--obs-outline)    !important; }
+.border-gray-700 { border-color: var(--obs-outline-hi) !important; }
+
+.text-gray-500 { color: var(--obs-on-surface-v) !important; }
+.text-gray-400 { color: #adaaaa                !important; }
+.text-gray-300 { color: #d0cfcf                !important; }
+.text-gray-200 { color: #e8e8e8                !important; }
+
+/* ── Brand → ASSA green ──────────────────────────────────── */
+.bg-brand {
+  background: linear-gradient(135deg, #00e676 0%, #00a650 100%) !important;
+  box-shadow: 0 4px 16px rgba(0,200,83,0.28) !important;
 }
+.text-brand { color: var(--obs-primary) !important; }
+.border-brand { border-color: var(--obs-primary) !important; }
+.focus\:border-brand:focus { border-color: var(--obs-primary) !important; }
+
+/* ── Typography ──────────────────────────────────────────── */
+.font-display, h1, h2 { font-family: 'Manrope', sans-serif; }
+
+/* ── Glass card ──────────────────────────────────────────── */
+.glass-card {
+  background: rgba(255,255,255,0.03);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid var(--obs-outline);
+}
+
+/* ── Obsidian card (primary surface) ─────────────────────── */
+.obs-card {
+  background: var(--obs-s3);
+  border-radius: 12px;
+  position: relative;
+}
+.obs-card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 10%; right: 10%; height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.06), transparent);
+  pointer-events: none;
+}
+
+/* ── Display number (large metric) ───────────────────────── */
+.display-metric {
+  font-family: 'Manrope', sans-serif;
+  font-weight: 800;
+  font-size: 2.5rem;
+  line-height: 1;
+  letter-spacing: -0.02em;
+}
+
+/* ── Primary button ──────────────────────────────────────── */
+.btn-obs {
+  background: linear-gradient(135deg, #00e676 0%, #00a650 100%);
+  color: #000;
+  font-family: 'Manrope', sans-serif;
+  font-weight: 700;
+  border-radius: 9999px;
+  box-shadow: 0 4px 20px rgba(0,200,83,0.30);
+}
+
+/* ── Input base ──────────────────────────────────────────── */
+input[type="text"],
+input[type="tel"],
+input[type="password"],
+input[type="date"],
+input[type="number"],
+select,
+textarea {
+  background-color: var(--obs-s3) !important;
+  border-color: var(--obs-outline) !important;
+  color: var(--obs-on-surface) !important;
+}
+input::placeholder,
+textarea::placeholder { color: var(--obs-on-surface-v) !important; }
+
+/* ── Safe area ───────────────────────────────────────────── */
+.safe-bottom { padding-bottom: env(safe-area-inset-bottom, 16px); }

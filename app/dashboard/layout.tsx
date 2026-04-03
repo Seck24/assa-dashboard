@@ -84,11 +84,32 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
 
   return (
     <div className="flex flex-col min-h-screen">
-      {/* Header */}
-      <header className="flex items-center justify-between px-4 py-3 bg-gray-900 border-b border-gray-800 sticky top-0 z-10">
-        <span className="text-brand font-bold text-lg w-14">ASSA</span>
-        <span className="text-white font-semibold text-sm flex-1 text-center">{pageTitle}</span>
-        <span className="text-gray-300 text-sm truncate w-14 text-right">{nom}</span>
+      {/* ── Header — Obsidian Sommelier ───────────────────── */}
+      <header
+        className="flex items-center justify-between px-4 py-3 sticky top-0 z-10"
+        style={{
+          background: 'rgba(14,14,14,0.85)',
+          backdropFilter: 'blur(20px)',
+          WebkitBackdropFilter: 'blur(20px)',
+          borderBottom: '1px solid rgba(255,255,255,0.05)',
+          boxShadow: '0 1px 24px rgba(0,0,0,0.5)',
+        }}
+      >
+        <span
+          className="font-display font-bold text-base w-14"
+          style={{ color: '#00c853', fontFamily: 'Manrope, sans-serif', letterSpacing: '0.04em' }}
+        >
+          ASSA
+        </span>
+        <span
+          className="font-semibold text-sm flex-1 text-center"
+          style={{ fontFamily: 'Manrope, sans-serif', color: '#ffffff', letterSpacing: '0.06em', textTransform: 'uppercase', fontSize: '0.75rem' }}
+        >
+          {pageTitle}
+        </span>
+        <span className="text-sm truncate w-14 text-right" style={{ color: '#adaaaa', fontFamily: 'Inter, sans-serif', fontSize: '0.75rem' }}>
+          {nom}
+        </span>
       </header>
 
       {/* Content */}
@@ -102,9 +123,17 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
         {children}
       </main>
 
-      {/* Bottom nav — masquée sur la page d'activation */}
+      {/* ── Bottom nav — glass obsidian ───────────────────── */}
       {!isActiverPage && (
-        <nav className="fixed bottom-0 left-1/2 -translate-x-1/2 w-full max-w-md bg-gray-900 border-t border-gray-800 safe-bottom z-10">
+        <nav
+          className="fixed bottom-0 left-1/2 -translate-x-1/2 w-full max-w-md safe-bottom z-10"
+          style={{
+            background: 'rgba(14,14,14,0.88)',
+            backdropFilter: 'blur(24px)',
+            WebkitBackdropFilter: 'blur(24px)',
+            borderTop: '1px solid rgba(255,255,255,0.05)',
+          }}
+        >
           <div className="flex">
             {tabs.map(tab => {
               const active = pathname === tab.href
@@ -118,14 +147,26 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                     if (targetIdx > currentIdx) setAnimClass('animate-slide-left')
                     else if (targetIdx < currentIdx) setAnimClass('animate-slide-right')
                   }}
-                  className={`flex-1 flex flex-col items-center py-2 gap-0.5 text-xs transition-colors ${
-                    active ? 'text-white' : 'text-gray-500'
-                  }`}
+                  className="flex-1 flex flex-col items-center py-2.5 gap-0.5 transition-colors"
+                  style={{ fontFamily: 'Inter, sans-serif' }}
                 >
-                  <span className={`text-lg leading-none ${active ? 'bg-brand rounded-md px-1.5 py-0.5' : ''}`}>
+                  <span
+                    className="text-lg leading-none"
+                    style={active ? {
+                      background: 'rgba(0,200,83,0.15)',
+                      borderRadius: 8,
+                      padding: '4px 8px',
+                      boxShadow: '0 0 12px rgba(0,200,83,0.20)',
+                    } : {}}
+                  >
                     {tab.icon}
                   </span>
-                  <span className={active ? 'text-brand font-semibold' : ''}>{tab.label}</span>
+                  <span
+                    className="text-xs font-semibold"
+                    style={{ color: active ? '#00c853' : '#777575' }}
+                  >
+                    {tab.label}
+                  </span>
                 </Link>
               )
             })}

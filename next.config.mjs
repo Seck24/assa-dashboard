@@ -5,6 +5,7 @@ const nextConfig = {
     return [{
       source: '/:path*',
       headers: [
+        { key: 'Cache-Control', value: 'no-cache, no-store, must-revalidate' },
         { key: 'Strict-Transport-Security', value: 'max-age=31536000; includeSubDomains' },
         { key: 'X-Content-Type-Options', value: 'nosniff' },
         { key: 'X-Frame-Options', value: 'DENY' },
